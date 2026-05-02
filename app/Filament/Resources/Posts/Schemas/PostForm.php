@@ -23,23 +23,36 @@ class PostForm
         return $schema
             ->components([
                 //section 1 - post details
-                Section::make('Post Detail')
-                ->Description('Fill in the details of the post')
-                ->icon('heroicon-o-document-text')
-                ->schema([
-                    //Grouping fields into 2 columns
-                    Group::make([
-                        TextInput::make('title')
-                            ->minLength(5),
-                        TextInput::make('slug')
-                            ->unique(ignoreRecord: true),
-                        Select::make('category_id')
-                            ->relationship('category', 'name')
-                            ->preload()
-                            ->searchable(),
-                        ColorPicker::make('color'),
-                    ])->columns(2),
-                    MarkdownEditor::make('content'),
+                Group::make([
+
+                    Section::make('Post Detail')
+                    ->Description('Fill in the details of the post')
+                    ->icon('heroicon-o-document-text')
+                    ->schema([
+                        //Grouping fields into 2 columns
+                        Group::make([
+                            TextInput::make('title')
+                                //->minLength(5)
+                                //->required()
+                                //->rules('required')
+                                //->maxLength(255)
+                                //->rules(["required", "min:3", "max:10"]),
+                                ->rules('required | min:3 | max: 10'),
+                            TextInput::make('slug')
+                                ->unique(ignoreRecord: true)
+                                ->rules('required')
+                                ->validationMessages([
+                                    'unique' => 'Slug must be unique.'
+                                ]),
+                            Select::make('category_id')
+                                ->relationship('category', 'name')
+                                ->required()
+                                ->preload()
+                                ->searchable(),
+                            ColorPicker::make('color'),
+                        ])->columns(2),
+                        MarkdownEditor::make('content'),
+                    ])->columnSpanFull(),
                 ])->columnSpan(2),
 
                 //Grouping fields into 2 columns
@@ -47,6 +60,7 @@ class PostForm
                     
                     //section 2 - image upload
                     Section::make('Image Upload')
+                    ->icon('heroicon-o-photo')
                     ->schema([
                         FileUpload::make('image')
                             ->disk('public')
@@ -55,6 +69,7 @@ class PostForm
                     
                     //section 3 - metadata
                     Section::make('Meta Information')
+                    ->icon('heroicon-o-cog-6-tooth')
                     ->schema([
                         TagsInput::make('tags'),
                         Checkbox::make('published'),
