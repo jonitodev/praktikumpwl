@@ -37,15 +37,23 @@ class PostForm
                                 //->rules('required')
                                 //->maxLength(255)
                                 //->rules(["required", "min:3", "max:10"]),
-                                ->rules('required | min:3 | max: 10'),
-                            TextInput::make('slug')
-                                ->unique(ignoreRecord: true)
-                                ->rules('required')
+                                //Title minimal 5 karakter
+                                ->rules('required | min:5 | max: 10')
                                 ->validationMessages([
-                                    'unique' => 'Slug must be unique.'
+                                    'max' => 'Maximal 10 karakter'
+                                ]),
+                            TextInput::make('slug')
+                                //Slug unik & minimal 3 karakter
+                                ->unique(ignoreRecord: true)
+                                ->rules('required | min:3')
+                                ->validationMessages([
+                                    'unique' => 'Slug must be unique.',
+                                    'min' => 'Minimal 3 karakter'
+
                                 ]),
                             Select::make('category_id')
                                 ->relationship('category', 'name')
+                                //Category wajib dipilih 
                                 ->required()
                                 ->preload()
                                 ->searchable(),
@@ -64,7 +72,9 @@ class PostForm
                     ->schema([
                         FileUpload::make('image')
                             ->disk('public')
-                            ->directory('posts'),
+                            ->directory('posts')
+                            //Image wajib diupload
+                            ->required(),
                     ]),
                     
                     //section 3 - metadata
